@@ -1,0 +1,31 @@
+name: WGLandClaim
+main: com.gmail.mrphpfan.WGLandClaim
+version: 1.0
+depend: [Vault, WorldGuard]
+
+permissions:
+  wglandclaim.*:
+    default: op
+    description: All WGLandClaim permissions (no restrictions or charges).
+    children:
+      wglandclaim.claimplot: true
+      wglandclaim.bypass: true
+  wglandclaim.claimplot:
+    description: Ability to claim a WGLandClaim plot and get charged
+    default: false
+  wglandclaim.bypass.*:
+    description: Bypasses costs and limits on WGLandClaim regions, plots, and flags
+    default: false
+    children:
+      wglandclaim.bypass.claim: true
+      wglandclaim.bypass.claimplot: true
+      wglandclaim.bypass.flags: true
+  wglandclaim.bypass.claim:
+    description: Bypass cost and limits of region claiming.
+    default: false
+  wglandclaim.bypass.claimplot:
+    description: Bypass cost and limits of plot claiming.
+    default: false
+  wglandclaim.bypass.flags:
+    description: Bypass costs of setting flags.
+    default: false

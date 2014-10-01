@@ -15,6 +15,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -199,7 +200,7 @@ public class WGLandClaim extends JavaPlugin implements Listener {
         return econ != null;
     }
 	
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onCommandPreprocess(PlayerCommandPreprocessEvent event){
 		Player player = event.getPlayer();
 		String msg = event.getMessage();
@@ -211,7 +212,7 @@ public class WGLandClaim extends JavaPlugin implements Listener {
 		}
 		
 		//claiming plot
-		if(msg.startsWith("/region claimplot ") || msg.startsWith("/rg claimplot ")){
+		if(msg.startsWith("/region claimplot") || msg.startsWith("/rg claimplot")){
 			//check if plots have been enabled
 			if(!enablePlots){
 				return;
@@ -233,6 +234,11 @@ public class WGLandClaim extends JavaPlugin implements Listener {
 				return;
 			}
 			
+			String[] cmdTokens = msg.split(" ");
+			if (cmdTokens.length < 3){
+				player.sendMessage(ChatColor.GOLD + "Usage: /region claimplot <regionname>");
+				return;
+			}
 			String rgname = msg.split(" ")[2];
 			
 			RegionManager regionManager = worldGuard.getRegionManager(player.getWorld());
@@ -255,7 +261,7 @@ public class WGLandClaim extends JavaPlugin implements Listener {
 					ApplicableRegionSet regions2 = worldGuard.getRegionManager(loc2.getWorld()).getApplicableRegions(loc2);
 					
 					if(regions.size() < 1 || regions2.size() < 1){
-						player.sendMessage(ChatColor.RED + "You need to make plots in a region.");
+						player.sendMessage(ChatColor.RED + "You can only make plots inside a region you own.");
 						return;
 					}
 					

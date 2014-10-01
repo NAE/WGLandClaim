@@ -12,7 +12,7 @@ permissions:
       wglandclaim.bypass: true
   wglandclaim.claimplot:
     description: Ability to claim a WGLandClaim plot and get charged
-    default: false
+    default: true
   wglandclaim.bypass.*:
     description: Bypasses costs and limits on WGLandClaim regions, plots, and flags
     default: false
@@ -29,3 +29,16 @@ permissions:
   wglandclaim.bypass.flags:
     description: Bypass costs of setting flags.
     default: false
+commands:
+  region claimtown:
+    description: Claims a large region.
+    usage: /region claimtown <region_name>
+  rg claimtown:
+    description: Claims a large region.
+    usage: /region claimtown <region_name>
+  region claimplot:
+    description: Claims a small region, must be inside a town region that you own.
+    usage: /region claimplot <region_name>
+  rg claimplot:
+    description: Claims a small region, must be inside a town region that you own.
+    usage: /region claimplot <region_name>

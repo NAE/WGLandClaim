@@ -27,7 +27,8 @@ import com.sk89q.minecraft.util.commands.CommandPermissionsException;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldedit.bukkit.selections.Selection;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
-import com.sk89q.worldguard.bukkit.commands.RegionCommands;
+import com.sk89q.worldguard.bukkit.commands.region.MemberCommands;
+import com.sk89q.worldguard.bukkit.commands.region.RegionCommands;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
 import com.sk89q.worldguard.protection.flags.Flag;
@@ -50,6 +51,7 @@ public class WGLandClaim extends JavaPlugin implements Listener {
 	private boolean autoExpand = false;
 	private int maxRegionWidth = 150;
 	private int maxPlotWidth = 30;
+	private boolean useUUID = true;
 	
 	@Override
 	public void onEnable(){
@@ -94,6 +96,11 @@ public class WGLandClaim extends JavaPlugin implements Listener {
         if(this.getConfig().get("enable_plots") == null){
 	        this.getConfig().addDefault("enable_plots", false);
 	        this.saveConfig();
+        }
+        
+        if(this.getConfig().get("use_uuid") == null){
+        	this.getConfig().addDefault("use_uuid", true);
+        	this.saveConfig();
         }
         
         //auto expand regions
@@ -144,6 +151,11 @@ public class WGLandClaim extends JavaPlugin implements Listener {
         Object expand = config.get("region_auto_expand_vert");
         if(expand != null){
         	autoExpand = (Boolean) expand;
+        }
+        
+        Object useUUIDOpt = config.get("use_uuid");
+        if(useUUIDOpt != null){
+        	useUUID = (Boolean) useUUIDOpt;
         }
         
         //read in max region width
@@ -200,7 +212,7 @@ public class WGLandClaim extends JavaPlugin implements Listener {
         return econ != null;
     }
 	
-	@EventHandler(priority = EventPriority.HIGHEST)
+	@EventHandler(priority = EventPriority.MONITOR)
 	public void onCommandPreprocess(PlayerCommandPreprocessEvent event){
 		Player player = event.getPlayer();
 		String msg = event.getMessage();
@@ -270,6 +282,11 @@ public class WGLandClaim extends JavaPlugin implements Listener {
 					try{
 						CommandContext args = new CommandContext(new String[]{"claim", rgname});
 						r.claim(args, player);
+						if(useUUID){
+							MemberCommands mc = new MemberCommands(worldGuard);
+							CommandContext args2 = new CommandContext(new String[]{"addowner", rgname, player.getName()});
+							mc.addOwner(args2, player);
+						}
 					}catch(CommandException e){
 						player.sendMessage(ChatColor.RED + e.getMessage());
 						e.printStackTrace();
@@ -344,6 +361,11 @@ public class WGLandClaim extends JavaPlugin implements Listener {
 					try{
 						CommandContext args = new CommandContext(new String[]{"claim", rgname});
 						r.claim(args, player);
+						if(useUUID){
+							MemberCommands mc = new MemberCommands(worldGuard);
+							CommandContext args2 = new CommandContext(new String[]{"addowner", rgname, player.getName()});
+							mc.addOwner(args2, player);
+						}
 					}catch(CommandException e){
 						if(e.getMessage() != null){
 							player.sendMessage(ChatColor.RED + e.getMessage());
